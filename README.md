@@ -48,223 +48,146 @@ Deploy the website.
 Upload to GitHub Pages for free hosting.
 
 ## PROGRAM
+app.css
 ```
-# app.jsx:
-import React, { useState } from "react";
-import "./App.css";
+.calculator-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  background-color: #f4f4f9;
+}
+
+.calculator {
+  background: #222;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 280px;
+}
+
+.display {
+  background: #111;
+  color: #fff;
+  font-size: 2rem;
+  padding: 15px;
+  text-align: right;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  min-height: 40px;
+  word-wrap: break-word;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+button {
+  padding: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #444;
+  color: white;
+}
+
+button:hover {
+  background: #555;
+}
+
+.btn-op { background: #f39c12; }
+.btn-op:hover { background: #e67e22; }
+
+.btn-action { background: #e74c3c; }
+.btn-action:hover { background: #c0392b; }
+
+.btn-equal {
+  background: #2ecc71;
+  grid-row: span 2;
+  height: 100%;
+}
+.btn-equal:hover { background: #27ae60; }
+
+.btn-zero {
+  grid-column: span 2;
+}
+```
+app.js
+```
+import React from 'react';
+import Calculator from './Calculator';
 
 function App() {
-  const [input, setInput] = useState("");
-
-  const handleClick = (value) => {
-    setInput((prev) => prev + value);
-  };
-
-  const clearDisplay = () => {
-    setInput("");
-  };
-
-  const deleteLast = () => {
-    setInput((prev) => prev.slice(0, -1));
-  };
-
-  const calculate = () => {
-    try {
-      setInput(eval(input).toString());
-    } catch {
-      setInput("Error");
-    }
-  };
-
-  const buttons = [
-    "7", "8", "9", "/",
-    "4", "5", "6", "*",
-    "1", "2", "3", "-",
-    "0", ".", "=", "+"
-  ];
-
   return (
-    <div className="container">
-      <div className="calculator">
-        <h1>Calculator</h1>
-
-        <div className="display">
-          {input || "0"}
-        </div>
-
-        <div className="top-buttons">
-          <button className="special" onClick={clearDisplay}>
-            AC
-          </button>
-
-          <button className="special" onClick={deleteLast}>
-            DEL
-          </button>
-        </div>
-
-        <div className="buttons">
-          {buttons.map((btn) => (
-            <button
-              key={btn}
-              className={btn === "=" ? "equal" : ""}
-              onClick={() =>
-                btn === "=" ? calculate() : handleClick(btn)
-              }
-            >
-              {btn}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="App">
+      <Calculator />
     </div>
   );
 }
 
 export default App;
 ```
-
-
+calculator.js
 ```
-# app.css:
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
 
-body {
-  min-height: 100vh;
-  background: linear-gradient(
-    135deg,
-    #0f172a,
-    #1e293b,
-    #334155
+import React, { useState } from 'react';
+import './Calculator.css';
+
+function Calculator() {
+  const [input, setInput] = useState('');
+
+  const handleClick = (value) => {
+    setInput((prev) => prev + value);
+  };
+
+  const handleClear = () => {
+    setInput('');
+  };
+
+  const handleCalculate = () => {
+    try {
+      setInput(Function(`'use strict'; return (${input})`)().toString());
+    } catch {
+      setInput('Error');
+    }
+  };
+i
+  return (
+    <div className="calculator-container">
+      <div className="calculator">
+        <div className="display">{input || '0'}</div>
+        <div className="buttons">
+          <button onClick={handleClear} className="btn-action">C</button>
+          <button onClick={() => handleClick('/')} className="btn-op">÷</button>
+          <button onClick={() => handleClick('*')} className="btn-op">×</button>
+          <button onClick={() => handleClick('-')} className="btn-op">-</button>
+
+          <button onClick={() => handleClick('7')}>7</button>
+          <button onClick={() => handleClick('8')}>8</button>
+          <button onClick={() => handleClick('9')}>9</button>
+          <button onClick={() => handleClick('+')} className="btn-op">+</button>
+
+          <button onClick={() => handleClick('4')}>4</button>
+          <button onClick={() => handleClick('5')}>5</button>
+          <button onClick={() => handleClick('6')}>6</button>
+          <button onClick={handleCalculate} className="btn-equal">=</button>
+
+          <button onClick={() => handleClick('1')}>1</button>
+          <button onClick={() => handleClick('2')}>2</button>
+          <button onClick={() => handleClick('3')}>3</button>
+          <button onClick={() => handleClick('0')} className="btn-zero">0</button>
+          <button onClick={() => handleClick('.')}>.</button>
+        </div>
+      </div>
+    </div>
   );
 }
 
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-}
-
-.calculator {
-  width: 380px;
-  padding: 25px;
-  border-radius: 25px;
-
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(18px);
-
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 0 10px rgba(255,255,255,0.05);
-
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.calculator h1 {
-  text-align: center;
-  color: white;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-.display {
-  height: 90px;
-  background: rgba(255,255,255,0.08);
-  color: white;
-  border-radius: 15px;
-  margin-bottom: 20px;
-
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-
-  padding: 20px;
-  font-size: 2rem;
-  overflow-x: auto;
-}
-
-.top-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.special {
-  background: #ef4444;
-}
-
-.buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-button {
-  height: 65px;
-  border: none;
-  border-radius: 15px;
-  font-size: 1.2rem;
-  color: white;
-
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(5px);
-
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-button:hover {
-  transform: translateY(-3px);
-  background: rgba(255,255,255,0.18);
-}
-
-button:active {
-  transform: scale(0.95);
-}
-
-.equal {
-  background: #22c55e;
-  font-weight: bold;
-}
-
-.equal:hover {
-  background: #16a34a;
-}
-
-@media (max-width: 450px) {
-  .calculator {
-    width: 100%;
-  }
-
-  button {
-    height: 55px;
-  }
-
-  .display {
-    font-size: 1.6rem;
-  }
-}
-```
-
-```
-# main.jsx:
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./App.css";
-
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+export default Calculator;
 ```
 
 
@@ -272,7 +195,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 ## OUTPUT
 
 <img width="1917" height="1027" alt="image" src="https://github.com/user-attachments/assets/2f62cfea-254a-4574-8220-483175c571f7" />
-<img width="1919" height="1023" alt="image" src="https://github.com/user-attachments/assets/9d3e920c-68ae-4244-bf07-79081988c892" />
+
 
 ## RESULT
 The program for developing a simple calculator in React.js is executed successfully.
